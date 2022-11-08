@@ -17,6 +17,6 @@ function read_data(dataset::String, filename::String; n_limit::Int=-1)::Tuple
 end
 
 
-export read_data, transform2hyp, data2hyp
+export read_data, transform2hyp, data2basis
 
 end
