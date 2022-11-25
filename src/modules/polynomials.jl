@@ -85,7 +85,7 @@ momentum embedding. Default to n_pt = 3
 
    # we can now construct an AA basis
    basis = AABasis(Abas, AAspec, orders)
-   return basis, AAspec, Abas
+   return basis, orders, Abas
 end
 
 export build_ip
