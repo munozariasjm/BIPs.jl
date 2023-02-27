@@ -1,7 +1,7 @@
 module DataReader
 using HDF5, H5Zblosc, H5Zbzip2, H5Zlz4, H5Zzstd, StaticArrays
 
-function _get_data(hdf_table, n_limit; n_particles=200)::Tuple{Vector,Vector}
+function _get_data(hdf_table, n_limit; n_particles=120)::Tuple{Vector,Vector}
     arr = Vector{SVector{4,Float64}}[]
     labels = []
     for jet = 1:n_limit
