@@ -1,7 +1,7 @@
 module DataReader
 using HDF5, H5Zblosc, H5Zbzip2, H5Zlz4, H5Zzstd, StaticArrays
 
-function _get_data(hdf_table, n_limit; n_particles=120)::Tuple{Vector,Vector}
+function _get_data(hdf_table, n_limit; n_particles=200)::Tuple{Vector,Vector}
     arr = Vector{SVector{4,Float64}}[]
     labels = []
     for jet = 1:n_limit
@@ -32,5 +32,37 @@ function read_TQ(filepath::String; n_limit::Int=-1)
     _get_data(table_data["table"], n_limit)
 end
 
-export read_TQ
+function _get_reco_data(hdf_table, targets, n_limit; n_particles=200)::Tuple{Vector,Vector}
+    arr = Vector{SVector{4,Float64}}[]
+    labels = []
+    for jet = 1:n_limit
+        jet_vals = SVector{4,Float64}[]
+        for (i, particle) = enumerate(1:n_particles)
+            p = SVector{4}(hdf_table[:, i, jet])
+            if p[1] > 0.0
+                push!(jet_vals, p)
+            end
+        end
+        if length(jet_vals) > 1
+            push!(arr, jet_vals)
+            push!(labels, targets[jet])
+        end
+    end
+    arr, labels
+end
+
+
+function read_RecoTQ(filepath::String; n_limit::Int=-1)
+    fid = h5open(filepath, "r")
+    table_data = read(fid, "Pmu")
+    targets = read(fid, "truth_Pmu_1")
+    close(fid)
+    if n_limit == -1
+        n_limit = length(targets[1, :])
+        @show length(targets[1, :])
+    end
+    _get_reco_data(table_data, targets, n_limit)
+end
+
+export read_TQ, read_RecoTQ
 end
